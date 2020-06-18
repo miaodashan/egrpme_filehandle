@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tospur.egrpme.dao.BatchHandleDao">
+    <delete id="deleteBatch">
+        DELETE FROM
+        <choose>
+            <when test="type==1">
+                baidu_count_show
+            </when>
+            <when test="type==2">
+                media_show4
+            </when>
+            <otherwise>
+                hmpl_code_show
+            </otherwise>
+        </choose>
+        <where>
+            import_batch=#{batch}
+        </where>
+    </delete>
+
+    <select id="findBatchByBatch" resultType="com.tospur.egrpme.model.BatchData">
+        SELECT DISTINCT import_batch FROM
+        <choose>
+            <when test="type==1">
+                baidu_count_show
+            </when>
+            <when test="type==2">
+                media_show4
+            </when>
+            <otherwise>
+                hmpl_code_show
+            </otherwise>
+        </choose>
+        <where>
+            import_batch LIKE concat('%',#{batch},'%')
+        </where>
+    </select>
+</mapper>

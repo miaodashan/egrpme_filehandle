@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tospur.egrpme.dao.ErrorDataDao">
+    <select id="findErrorData" resultType="com.tospur.egrpme.model.ErrorData">
+        SELECT rowNum,errorContent FROM
+        <choose>
+            <when test="type==1">
+                baidu_count_error
+            </when>
+            <when test="type==2">
+                media_error
+            </when>
+            <otherwise>
+                hmplcode_error
+            </otherwise>
+        </choose>
+    </select>
+</mapper>
