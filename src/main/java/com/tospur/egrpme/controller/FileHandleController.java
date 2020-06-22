@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 
-import static org.apache.commons.codec.binary.StringUtils.newString;
-
 /**
  * 文件处理
  * */
@@ -45,7 +43,7 @@ public class FileHandleController {
      * */
     @RequestMapping("/fileImport")
     @ResponseBody
-    public String fileImport(MultipartFile excelFile,Integer type,Integer uploadLog,String operator) throws Exception{
+        public String fileImport(MultipartFile excelFile,Integer type,Integer uploadLog,String operator) throws Exception{
         logger.info("获取文件上传路径");
         String path = FilePathEnum.getPath(type);
         File file =new File(path);
@@ -82,7 +80,10 @@ public class FileHandleController {
         JSONObject jsonObject = new JSONObject(msgMap);
         return jsonObject.toJSONString();
     }
-
+    /**
+     * 执行脚本sh方法
+     * 时间戳+操作用户限制
+     * */
     @RequestMapping(value="/ExShell",method= RequestMethod.GET)
     @ResponseBody
     public void ExcShell( String pathname, String operator,HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -97,8 +98,8 @@ public class FileHandleController {
             newdate.add(PropertiesConfig.readData(null,str.toString()+operator));
         }
         for (String str:oldstampdate) {
-            if(PropertiesConfig.readData(null,str.toString())==null){
-                updatedate.add("-"+operator);
+            if(PropertiesConfig.readData(null,str.toString()+operator)==null){
+                updatedate.add(str.toString()+operator);
             }else{
                 updatedate.add(PropertiesConfig.readData(null,str.toString()+operator));
             }
@@ -143,6 +144,7 @@ public class FileHandleController {
 
     /**
      * 执行脚本sh
+     * 传参：operator（操作者），uploadLog（执行文件类型）
      * */
     @RequestMapping(value="/ExecuteShell",method= RequestMethod.GET)
     @ResponseBody
@@ -222,7 +224,7 @@ public class FileHandleController {
     }
 
     /**
-     * 执行脚本sh1
+     * 测试执行脚本sh1
      * */
     @RequestMapping(value="/testshell",method= RequestMethod.GET)
     @ResponseBody
@@ -244,11 +246,15 @@ public class FileHandleController {
         Thread.sleep(30000);
     }
 
+    /**
+     * 测试配置文件读写+执行sh
+     * */
     @RequestMapping(value="/test",method= RequestMethod.GET)
     @ResponseBody
     public void Shelltest( String pathname, HttpServletRequest request, HttpServletResponse response) throws Exception{
-        logger.info("执行shell脚本");
+        logger.info("配置文件读写");
         String shellfile=PropertiesConfig.readData(null,pathname);
+        logger.info("执行sh脚本");
         ShellExcutor.service(pathname);
     }
 
@@ -272,6 +278,9 @@ public class FileHandleController {
         response.getWriter().print(res);
     }
 
+    /**
+     * 读取配置文件
+     * */
     @RequestMapping(value="/configRead",method= RequestMethod.GET)
     @ResponseBody
     public void configRead( String pathkey, HttpServletRequest request, HttpServletResponse response) throws Exception{
